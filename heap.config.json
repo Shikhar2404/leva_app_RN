@@ -1,0 +1,14 @@
+{
+  "default": {
+    "heapAutoInit": true,
+    "enableNativeTouchEventCapture": true
+  },
+  "dev": {
+    "heapAutoInit": true,
+    "heapAppId": "1464046109"
+  },
+  "prod": {
+    "heapAppId": "2862325199",
+    "heapAutoInit": true
+  }
+}

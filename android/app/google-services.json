@@ -1,0 +1,78 @@
+{
+  "project_info": {
+    "project_number": "924524413163",
+    "project_id": "leva-efd4e",
+    "storage_bucket": "leva-efd4e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924524413163:android:6d82871aa6a19ba3d1beae",
+        "android_client_info": {
+          "package_name": "com.leva"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924524413163-0qu0k5uqt0qtnij4amgmpiep59abab6f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leva",
+            "certificate_hash": "249c913769430520715d1beec2fb7696bade3d8a"
+          }
+        },
+        {
+          "client_id": "924524413163-4tiihart2k0oqb2075nk4gvtuc60gnik.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leva",
+            "certificate_hash": "25d94c13cb7ac4a1eb146a521a20b288c367adcc"
+          }
+        },
+        {
+          "client_id": "924524413163-b0tvi5vg9jcj8ail5d9cvbitkebl2jcn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leva",
+            "certificate_hash": "2125c87f691a48ba1d4d9b476485cb0301fb689e"
+          }
+        },
+        {
+          "client_id": "924524413163-e6025h9arlcvp51e0l7kf8rs407sbt0j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leva",
+            "certificate_hash": "9e8f685f995669afe79d19352c734a8f1c7b38f2"
+          }
+        },
+        {
+          "client_id": "924524413163-t65ikhn64qo6dhu0h4hde5925n4vdt80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBps211FALs_HAnHG-GB_HJEqwjg5MtP4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924524413163-t65ikhn64qo6dhu0h4hde5925n4vdt80.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "924524413163-4mvjagpglnhbdvigmuf3q05bqiddul0p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.leva"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
