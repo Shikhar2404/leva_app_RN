@@ -157,6 +157,21 @@ export default function SignInScreen({ route, navigation }) {
       }
     }
   };
+
+  const getSigninType = (type) => {
+    let text = "";
+    text =
+      type == "1"
+        ? "Email_Sign_In"
+        : type == "2"
+        ? "Google_Sign_In"
+        : type == "3"
+        ? "Facebook_Sign_In"
+        : "Apple_Sign_In";
+
+    return text;
+  };
+
   //API Calling
   const SignInAPI = async (type) => {
     setState((oldState) => ({
@@ -180,19 +195,21 @@ export default function SignInScreen({ route, navigation }) {
     if (response.status === "SUCCESS") {
       setUserIdentity(para.email);
 
-      if (response.data.is_new_record) {
-        const trackEventparam = {
-          action:
-            type == "1"
-              ? "Email Sign In"
-              : type == "2"
-              ? "Google Sign In"
-              : type == "3"
-              ? "Facebook Sign In"
-              : "Apple Sign In",
-        };
-        trackEvent({ event: "Sign_In", trackEventparam });
-      }
+      const trackEventparam = {
+        action:
+          type == "1"
+            ? "Email Sign In"
+            : type == "2"
+            ? "Google Sign In"
+            : type == "3"
+            ? "Facebook Sign In"
+            : "Apple Sign In",
+      };
+      // if (response.data.is_new_record) {
+      //   trackEvent({ event: getSigninType(type), trackEventparam });
+      // } else {
+      trackEvent({ event: getSigninType(type), trackEventparam });
+      // }
       if (!response.data.is_interest_selected) {
         Request.setToken(response.data.token);
         await StorageService.saveItem(

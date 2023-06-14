@@ -7,12 +7,15 @@ export async function trackEvent({ event, ...params }) {
     return;
   }
   const props = params ? params.trackEventparam : undefined;
-  analytics().logEvent(event, props);
+  // analytics().logEvent(event, props);
 
   const authData = await StorageService.getItem(
     StorageService.STORAGE_KEYS.USER_DETAILS
   );
-  Heap.identify(authData.email);
+
+  if (authData) {
+    Heap.identify(authData.email);
+  }
   Heap.track(event, props);
 }
 
