@@ -16,6 +16,9 @@ export async function trackEvent({ event, ...params }) {
   if (authData) {
     Heap.identify(authData.email);
   }
+  if (event === "Screen_Name") {
+    event = props?.action;
+  }
   Heap.track(event, props);
 }
 
