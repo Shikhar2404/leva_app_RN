@@ -100,6 +100,11 @@ export default function TotalGrowthScreen({ route, navigation }) {
         isSubscribe:
           response.code == apiConfigs.USER_UNSUBSCRIBE ? true : false,
       }));
+
+      if (response.code == apiConfigs.USER_UNSUBSCRIBE) {
+        const trackEventparam = { action: "Paywall_Growth_Screen" };
+        trackEvent({ event: "Paywall_Growth_Screen", trackEventparam });
+      }
     } else {
       setState((oldState) => ({
         ...oldState,
