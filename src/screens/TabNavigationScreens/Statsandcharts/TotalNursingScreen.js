@@ -379,14 +379,6 @@ export default function TotalNursingScreen({ route, navigation }) {
                   barBorderRadius={0}
                   xAxisTextNumberOfLines={2}
                   spacing={10}
-                  // minValue={0}
-                  // maxValue={5}
-                  noOfSections={
-                    state.istype == "3"
-                      ? 10
-                      : (state.maxValue > 2 ? state.maxValue : 2) -
-                        state.minValue
-                  }
                   minValue={state.minValue}
                   maxValue={state.maxValue > 2 ? state.maxValue : 2}
                   yAxisLabelSuffix={
