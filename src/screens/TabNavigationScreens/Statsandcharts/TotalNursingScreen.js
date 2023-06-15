@@ -114,6 +114,11 @@ export default function TotalNursingScreen({ route, navigation }) {
         isSubscribe:
           response.code == apiConfigs.USER_UNSUBSCRIBE ? true : false,
       }));
+
+      if (response.code == apiConfigs.USER_UNSUBSCRIBE) {
+        const trackEventparam = { action: "Paywall_TotalNursing_Screen" };
+        trackEvent({ event: "Paywall_TotalNursing_Screen", trackEventparam });
+      }
     } else {
       setState((oldState) => ({
         ...oldState,
@@ -374,11 +379,16 @@ export default function TotalNursingScreen({ route, navigation }) {
                   barBorderRadius={0}
                   xAxisTextNumberOfLines={2}
                   spacing={10}
-                  minValue={0}
-                  maxValue={5}
-                  noOfSections={5}
-                  // minValue={state.minValue}
-                  // maxValue={state.maxValue > 2 ? state.maxValue : 2}
+                  // minValue={0}
+                  // maxValue={5}
+                  noOfSections={
+                    state.istype == "3"
+                      ? 10
+                      : (state.maxValue > 2 ? state.maxValue : 2) -
+                        state.minValue
+                  }
+                  minValue={state.minValue}
+                  maxValue={state.maxValue > 2 ? state.maxValue : 2}
                   yAxisLabelSuffix={
                     state.istype == "1"
                       ? " hr"
