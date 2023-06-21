@@ -210,11 +210,13 @@ export default function ArticlesDetailesScreen({ route, navigation }) {
       ...oldState,
       isSubscribe: false,
     }));
-    setTimeout(() => {
-      const trackEventparam = { action: state.articleDetails.name };
-      trackEvent({ event: "Article", trackEventparam });
-      navigation.goBack();
-    }, 10);
+
+    const trackEventparam = { action: state.articleDetails.name };
+    trackEvent({
+      event: "Article->" + trackEventparam.action,
+      trackEventparam,
+    });
+    navigation.goBack();
   };
   const onPress = (_, href, htmlAttribs) => {
     var pattern = /^((http|https|ftp|news):\/\/)/;

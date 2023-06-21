@@ -300,8 +300,8 @@ export default function MeditationDetailesScreen({ route, navigation }) {
     await MeditationsDetailsApi(data);
   };
   const MeditationsDetailsApi = async (data) => {
-    const trackEventparam = { name: data.title, Time_in_Meditiation: "" };
-    trackEvent({ event: "Meditation", trackEventparam });
+    // const trackEventparam = { name: data.title, Time_in_Meditiation: "" };
+    // trackEvent({ event: "Meditation", trackEventparam });
     let params = {
       meditation_id: data.id,
     };
@@ -394,14 +394,16 @@ export default function MeditationDetailesScreen({ route, navigation }) {
       ...oldState,
       isSubscribe: false,
     }));
-    setTimeout(async () => {
-      const trackEventparam = {
-        name: state.meditationDetails.title,
-        Time_in_Meditiation: AppPlayer.secondsToHHMMSS(position),
-      };
-      trackEvent({ event: "Meditation", trackEventparam });
-      navigation.goBack();
-    }, 10);
+
+    const trackEventparam = {
+      name: state.meditationDetails.title,
+      Time_in_Meditiation: AppPlayer.secondsToHHMMSS(position),
+    };
+    trackEvent({
+      event: "Meditation->" + trackEventparam.name,
+      trackEventparam,
+    });
+    navigation.goBack();
   };
 
   return (

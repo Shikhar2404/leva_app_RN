@@ -96,24 +96,23 @@ export default function VideoDetailesScreen({ route, navigation }) {
       isSubscribe: false,
     }));
   };
-  const goBackNav = () => {
+  const goBackNav = async () => {
     setState((oldState) => ({
       ...oldState,
       isSubscribe: false,
     }));
-    setTimeout(async () => {
-      if (state.videoDetails.type == 1) {
-        const currentTime = await state.youTubePlayer.current.getCurrentTime();
-        const trackEventparam = {
-          name: state.videoDetails.name,
-          Time_in_Video: AppPlayer.secondsToHHMMSS(currentTime),
-        };
-        trackEvent({ event: "Video", trackEventparam });
-        navigation.goBack();
-      } else {
-        navigation.goBack();
-      }
-    }, 10);
+
+    if (state.videoDetails.type == 1) {
+      const currentTime = await state.youTubePlayer.current.getCurrentTime();
+      const trackEventparam = {
+        name: state.videoDetails.name,
+        Time_in_Video: AppPlayer.secondsToHHMMSS(currentTime),
+      };
+      trackEvent({ event: "Video->" + trackEventparam.name, trackEventparam });
+      navigation.goBack();
+    } else {
+      navigation.goBack();
+    }
   };
   const videoCallbacks = {
     timeupdate: (data) => console.log("timeupdate: ", data),
