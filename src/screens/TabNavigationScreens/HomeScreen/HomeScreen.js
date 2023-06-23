@@ -341,9 +341,14 @@ export default function HomeScreen({ route, navigation }) {
   const articlesRecommendedRenderItem = ({ item, index }) => {
     return (
       <TouchableWithoutFeedback
-        onPress={() =>
-          navigation.navigate("ArticlesDetailesScreen", { id: item.article_id })
-        }
+        onPress={() => {
+          const trackEventparam = { action: item.name };
+          trackEvent({ event: trackEventparam.action, trackEventparam });
+
+          navigation.navigate("ArticlesDetailesScreen", {
+            id: item.article_id,
+          });
+        }}
       >
         <View
           style={{
@@ -387,13 +392,16 @@ export default function HomeScreen({ route, navigation }) {
   const meditationRenderItem = ({ item, index }) => {
     return (
       <TouchableWithoutFeedback
-        onPress={() =>
+        onPress={() => {
+          const trackEventparam = { action: item.name };
+          trackEvent({ event: trackEventparam.action, trackEventparam });
+
           navigation.navigate("MeditationDetailesScreen", {
             meditationsData: state.HomeDataList[2].meditations,
             index: index,
             isNotification: false,
-          })
-        }
+          });
+        }}
       >
         <View
           style={{
@@ -437,9 +445,12 @@ export default function HomeScreen({ route, navigation }) {
   const videoRenderItem = ({ item, index }) => {
     return (
       <TouchableWithoutFeedback
-        onPress={() =>
-          navigation.navigate("VideoDetailesScreen", { id: item.video_id })
-        }
+        onPress={() => {
+          const trackEventparam = { action: item.name };
+          trackEvent({ event: trackEventparam.action, trackEventparam });
+
+          navigation.navigate("VideoDetailesScreen", { id: item.video_id });
+        }}
       >
         <View
           style={{

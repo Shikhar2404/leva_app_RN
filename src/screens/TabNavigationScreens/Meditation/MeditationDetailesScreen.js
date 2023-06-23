@@ -395,14 +395,14 @@ export default function MeditationDetailesScreen({ route, navigation }) {
       isSubscribe: false,
     }));
 
-    const trackEventparam = {
-      name: state.meditationDetails.title,
-      Time_in_Meditiation: AppPlayer.secondsToHHMMSS(position),
-    };
-    trackEvent({
-      event: "Meditation->" + trackEventparam.name,
-      trackEventparam,
-    });
+    // const trackEventparam = {
+    //   name: state.meditationDetails.title,
+    //   Time_in_Meditiation: AppPlayer.secondsToHHMMSS(position),
+    // };
+    // trackEvent({
+    //   event: "Meditation->" + trackEventparam.name,
+    //   trackEventparam,
+    // });
     navigation.goBack();
   };
 

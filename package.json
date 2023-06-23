@@ -74,7 +74,7 @@
     "react-native-vimeo-iframe": "^1.2.0",
     "react-native-walkthrough-tooltip": "^1.4.0",
     "react-native-webview": "^11.23.0",
-    "react-native-wheel-pick": "^1.2.0",
+    "react-native-wheel-pick": "1.2.0",
     "react-native-youtube-sdk": "^1.0.12",
     "rn-fetch-blob": "^0.12.0",
     "toggle-switch-react-native": "^3.3.0",

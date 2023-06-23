@@ -104,11 +104,11 @@ export default function VideoDetailesScreen({ route, navigation }) {
 
     if (state.videoDetails.type == 1) {
       const currentTime = await state.youTubePlayer.current.getCurrentTime();
-      const trackEventparam = {
-        name: state.videoDetails.name,
-        Time_in_Video: AppPlayer.secondsToHHMMSS(currentTime),
-      };
-      trackEvent({ event: "Video->" + trackEventparam.name, trackEventparam });
+      // const trackEventparam = {
+      //   name: state.videoDetails.name,
+      //   Time_in_Video: AppPlayer.secondsToHHMMSS(currentTime),
+      // };
+      // trackEvent({ event: "Video->" + trackEventparam.name, trackEventparam });
       navigation.goBack();
     } else {
       navigation.goBack();

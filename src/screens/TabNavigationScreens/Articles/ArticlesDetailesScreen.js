@@ -40,6 +40,12 @@ export default function ArticlesDetailesScreen({ route, navigation }) {
   });
 
   useEffect(() => {
+    const trackEventparam = { action: state.articleDetails.name };
+    trackEvent({
+      event: trackEventparam.action,
+      trackEventparam,
+    });
+
     const unsubscribe = navigation.addListener("focus", async () => {
       const IS_SUBSCRIBED = await StorageService.getItem(
         StorageService.STORAGE_KEYS.IS_SUBSCRIBED
@@ -60,6 +66,7 @@ export default function ArticlesDetailesScreen({ route, navigation }) {
       unsubscribe, backHandler.remove();
     };
   }, []);
+
   const generateLink = async (param) => {
     var imgurl = state.articleDetails.image;
     var imgurlfinal = imgurl.replace(/ /g, "%20");
@@ -211,11 +218,11 @@ export default function ArticlesDetailesScreen({ route, navigation }) {
       isSubscribe: false,
     }));
 
-    const trackEventparam = { action: state.articleDetails.name };
-    trackEvent({
-      event: "Article->" + trackEventparam.action,
-      trackEventparam,
-    });
+    // const trackEventparam = { action: state.articleDetails.name };
+    // trackEvent({
+    //   event: "Article->" + trackEventparam.action,
+    //   trackEventparam,
+    // });
     navigation.goBack();
   };
   const onPress = (_, href, htmlAttribs) => {

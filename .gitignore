@@ -26,3 +26,8 @@ android/.gradle/7.3.3/checksums/checksums.lock
 .idea/modules.xml
 .idea/leva_app_RN.iml
 android/local.properties
+android/app/build
+android/build
+android/.gradle/7.3.3/executionHistory/executionHistory.bin
+android/.gradle/buildOutputCleanup/outputFiles.bin
+android/.gradle/file-system.probe
