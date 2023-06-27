@@ -24,7 +24,7 @@ import TrackPlayer, {
 import { Slider } from "@sharcoux/slider";
 import AppPlayer from "../../../utils/AppPlayer";
 import showSimpleAlert from "../../../utils/showSimpleAlert";
-import { trackEvent } from "../../../utils/tracking";
+import { setEventWithProperty, trackEvent } from "../../../utils/tracking";
 import FastImage from "react-native-fast-image";
 import SubscriptionModalView from "../../../components/SubscriptionModalView";
 import apiConfigs from "../../../api/apiConfig";
@@ -307,6 +307,9 @@ export default function MeditationDetailesScreen({ route, navigation }) {
     };
     let response = await Request.post("meditation/detail", params);
     if (response.status === "SUCCESS") {
+      const trackEventparam = { name: response.data.name };
+      setEventWithProperty("MeditationDetailesScreen", trackEventparam.name);
+
       if (response.code == apiConfigs.USER_UNSUBSCRIBE) {
         TrackPlayer.pause();
         setState((oldState) => ({
@@ -395,14 +398,6 @@ export default function MeditationDetailesScreen({ route, navigation }) {
       isSubscribe: false,
     }));
 
-    // const trackEventparam = {
-    //   name: state.meditationDetails.title,
-    //   Time_in_Meditiation: AppPlayer.secondsToHHMMSS(position),
-    // };
-    // trackEvent({
-    //   event: "Meditation->" + trackEventparam.name,
-    //   trackEventparam,
-    // });
     navigation.goBack();
   };
 

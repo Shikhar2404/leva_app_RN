@@ -62,8 +62,8 @@ export default function MeditationScreen({ route, navigation }) {
     MeditationApi(true);
   };
   const action_DetailsScreen = async (index, item) => {
-    const trackEventparam = { action: item.name };
-    trackEvent({ event: trackEventparam.action, trackEventparam });
+    // const trackEventparam = { action: item.name };
+    // trackEvent({ event: trackEventparam.action, trackEventparam });
 
     navigation.navigate("MeditationDetailesScreen", {
       meditationsData: state.meditationsList,

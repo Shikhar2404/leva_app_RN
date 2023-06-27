@@ -22,6 +22,26 @@ export async function trackEvent({ event, ...params }) {
   Heap.track(event, props);
 }
 
+export async function setEventWithProperty(event, property) {
+  const authData = await StorageService.getItem(
+    StorageService.STORAGE_KEYS.USER_DETAILS
+  );
+
+  if (authData) {
+    Heap.identify(authData.email);
+  }
+
+  if (event === "MeditationDetailesScreen") {
+    Heap.track(event, { meditationName: property });
+  } else if (event === "ArticlesDetailesScreen") {
+    Heap.track(event, { articleName: property });
+  } else if (event === "VideoDetailesScreen") {
+    Heap.track(event, { videoName: property });
+  } else {
+    Heap.track(event);
+  }
+}
+
 export function setUserIdentity(email) {
   console.log("email=>", email);
   Heap.identify(email);

@@ -85,8 +85,8 @@ export default function ArticlesScreen({ route, navigation }) {
   };
   const click_Article = (item) => {
     // alert(JSON.stringify(item));
-    const trackEventparam = { action: item.name };
-    trackEvent({ event: trackEventparam.action, trackEventparam });
+    // const trackEventparam = { action: item.name };
+    // trackEvent({ event: trackEventparam.action, trackEventparam });
 
     navigation.navigate("ArticlesDetailesScreen", { id: item.article_id });
   };

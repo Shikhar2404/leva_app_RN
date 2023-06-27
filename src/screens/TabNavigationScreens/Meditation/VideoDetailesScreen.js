@@ -9,7 +9,7 @@ import Request from "../../../api/Request";
 import showSimpleAlert from "../../../utils/showSimpleAlert";
 import YouTubePlayer from "react-native-youtube-sdk";
 import { Vimeo } from "react-native-vimeo-iframe";
-import { trackEvent } from "../../../utils/tracking";
+import { setEventWithProperty, trackEvent } from "../../../utils/tracking";
 import SubscriptionModalView from "../../../components/SubscriptionModalView";
 import apiConfigs from "../../../api/apiConfig";
 import StorageService from "../../../utils/StorageService";
@@ -74,6 +74,9 @@ export default function VideoDetailesScreen({ route, navigation }) {
         isSubscribe:
           response.code == apiConfigs.USER_UNSUBSCRIBE ? true : false,
       }));
+
+      const trackEventparam = { name: response.data.name };
+      setEventWithProperty("VideoDetailesScreen", trackEventparam.name);
 
       if (response.code == apiConfigs.USER_UNSUBSCRIBE) {
         const trackEventparam = { action: "Paywall_Video_Screen" };

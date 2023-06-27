@@ -20,7 +20,11 @@ import RenderHtml, { defaultSystemFonts } from "react-native-render-html";
 import Share from "react-native-share";
 import dynamicLinks from "@react-native-firebase/dynamic-links";
 import showSimpleAlert from "../../../utils/showSimpleAlert";
-import { trackEvent } from "../../../utils/tracking";
+import {
+  setEventProperty,
+  setEventWithProperty,
+  trackEvent,
+} from "../../../utils/tracking";
 import FastImage from "react-native-fast-image";
 import SubscriptionModalView from "../../../components/SubscriptionModalView";
 import apiConfigs from "../../../api/apiConfig";
@@ -40,12 +44,6 @@ export default function ArticlesDetailesScreen({ route, navigation }) {
   });
 
   useEffect(() => {
-    const trackEventparam = { action: state.articleDetails.name };
-    trackEvent({
-      event: trackEventparam.action,
-      trackEventparam,
-    });
-
     const unsubscribe = navigation.addListener("focus", async () => {
       const IS_SUBSCRIBED = await StorageService.getItem(
         StorageService.STORAGE_KEYS.IS_SUBSCRIBED
@@ -140,6 +138,9 @@ export default function ArticlesDetailesScreen({ route, navigation }) {
         isSubscribe:
           response.code == apiConfigs.USER_UNSUBSCRIBE ? true : false,
       }));
+
+      const trackEventparam = { name: response.data.name };
+      setEventWithProperty("ArticlesDetailesScreen", trackEventparam.name);
 
       if (response.code == apiConfigs.USER_UNSUBSCRIBE) {
         const trackEventparam = { action: state.articleDetails.name };

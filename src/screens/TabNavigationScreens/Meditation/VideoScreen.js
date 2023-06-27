@@ -55,8 +55,8 @@ export default function VideoScreen({ route, navigation }) {
     videoApi(true);
   };
   const click_video = (index, item) => {
-    const trackEventparam = { action: item.name };
-    trackEvent({ event: trackEventparam.action, trackEventparam });
+    // const trackEventparam = { action: item.name };
+    // trackEvent({ event: trackEventparam.action, trackEventparam });
 
     navigation.navigate("VideoDetailesScreen", { id: item.video_id });
   };

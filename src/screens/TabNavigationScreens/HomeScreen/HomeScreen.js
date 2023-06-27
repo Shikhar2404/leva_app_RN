@@ -342,8 +342,8 @@ export default function HomeScreen({ route, navigation }) {
     return (
       <TouchableWithoutFeedback
         onPress={() => {
-          const trackEventparam = { action: item.name };
-          trackEvent({ event: trackEventparam.action, trackEventparam });
+          // const trackEventparam = { action: item.name };
+          // trackEvent({ event: trackEventparam.action, trackEventparam });
 
           navigation.navigate("ArticlesDetailesScreen", {
             id: item.article_id,
@@ -393,8 +393,8 @@ export default function HomeScreen({ route, navigation }) {
     return (
       <TouchableWithoutFeedback
         onPress={() => {
-          const trackEventparam = { action: item.name };
-          trackEvent({ event: trackEventparam.action, trackEventparam });
+          // const trackEventparam = { action: item.name };
+          // trackEvent({ event: trackEventparam.action, trackEventparam });
 
           navigation.navigate("MeditationDetailesScreen", {
             meditationsData: state.HomeDataList[2].meditations,
@@ -446,8 +446,8 @@ export default function HomeScreen({ route, navigation }) {
     return (
       <TouchableWithoutFeedback
         onPress={() => {
-          const trackEventparam = { action: item.name };
-          trackEvent({ event: trackEventparam.action, trackEventparam });
+          // const trackEventparam = { action: item.name };
+          // trackEvent({ event: trackEventparam.action, trackEventparam });
 
           navigation.navigate("VideoDetailesScreen", { id: item.video_id });
         }}
