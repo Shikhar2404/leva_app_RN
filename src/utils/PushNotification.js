@@ -1,19 +1,49 @@
 import { useEffect } from "react";
-import { Platform, AppState } from "react-native";
+import { Platform, AppState,  } from "react-native";
 import messaging from "@react-native-firebase/messaging";
+import { showMessage } from "react-native-flash-message";
+
 import NavigationService from "../utils/NavigationService";
 import StorageService from "../utils/StorageService";
-import { showMessage } from "react-native-flash-message";
 import { colors } from "./color";
 import { fonts } from "./font";
 import { trackEvent } from "./tracking";
 
 export default function PushNotifications({ route, navigation }) {
+
   let appState = AppState.currentState;
+
+  const checkPermission = async () => {
+    try {
+      const hasPermission = await messaging().hasPermission();
+      const enabled =
+        hasPermission === messaging.AuthorizationStatus.AUTHORIZED
+      if (enabled) {
+        await getFCMToken(
+          enabled
+        );
+      } else if  (hasPermission === messaging.AuthorizationStatus.DENIED) {
+        await getFCMToken(
+          hasPermission
+        );
+        const isPermission = await messaging().requestPermission();
+        if (!isPermission) {
+          return false;
+        } else {
+          await getFCMToken(false);
+        }
+      } 
+      else {
+        const isPermission = await messaging().requestPermission();
+        isPermission ? await getFCMToken(true) : getFCMToken(false)
+      }
+    } catch (error) {
+      console.error("Error in checkPermission", error);
+    }
+  };
+
   useEffect(() => {
     AppState.addEventListener("change", _handleAppStateChange);
-    checkPermission();
-
     /** token refresh in firebase notification */
     messaging().onTokenRefresh(async (fcmToken) => {
       const deviceToken = await Request.getDeviceToken();
@@ -21,6 +51,7 @@ export default function PushNotifications({ route, navigation }) {
         setFCMToken(fcmToken);
       }
     });
+
     // PushNotification.configure({
     //    // (optional) Called when Token is generated (iOS and Android)
     //    onRegister: function (token) {
@@ -66,6 +97,7 @@ export default function PushNotifications({ route, navigation }) {
     //    requestPermissions: true,
     //  });
     // forground ( when app open ) in firebase notification
+
     messaging().onMessage(async (remoteMessage) => {
       if (appState == "active") {
         showMessage(
@@ -90,7 +122,7 @@ export default function PushNotifications({ route, navigation }) {
             type: "success",
             icon: "appIcon",
           },
-          () => {}
+          () => { }
         );
       }
       // if (Platform.OS === 'android') {
@@ -129,9 +161,11 @@ export default function PushNotifications({ route, navigation }) {
         }
       });
     checkForIOS();
+    checkPermission();
     return () => {
       removeAllNotificationListners();
     };
+
   }, []);
 
   // const showNotification = (notification) => {
@@ -150,7 +184,7 @@ export default function PushNotifications({ route, navigation }) {
    * @param {*} notification
    * @param {*} isFromKilledApp
    * Handling notification tap and redireaction
-   */
+  */
   const handleNotificationRedirection = async (notification) => {
     if (notification.data.type == "1") {
       setTimeout(() => {
@@ -213,6 +247,34 @@ export default function PushNotifications({ route, navigation }) {
     }
   };
 
+  const getFCMToken = async (props) => {
+    try {
+      const token = await messaging().getToken();
+      if (token) {
+        setFCMToken(token);
+      }
+    } catch (error) {
+      console.log(error, "errr")
+    }
+    finally {
+      if (props || props === 1) {
+        const trackEventparam = { action: "Notification_Permission_Granted" };
+        trackEvent({
+          event: "Notification_Permission_Granted",
+          trackEventparam,
+        });
+      }
+      else {
+        const trackEventparamDenied = { action: "Notification_Permission_Denied" };
+        trackEvent({
+          event: "Notification_Permission_Denied",
+          trackEventparamDenied,
+        });
+      };
+    
+    }
+
+  }
   /**check config for iOS platform */
   const checkForIOS = async () => {
     if (Platform.OS == "ios") {
@@ -228,52 +290,11 @@ export default function PushNotifications({ route, navigation }) {
     appState = nextAppState;
   };
 
-  /**check the notification permission */
-  const checkPermission = async () => {
-    let trackEventparam = { action: "Notification_Permission_Granted" };
-
-    const hasPermission = await messaging().hasPermission();
-    const enabled =
-      hasPermission === messaging.AuthorizationStatus.AUTHORIZED ||
-      hasPermission === messaging.AuthorizationStatus.PROVISIONAL;
-    if (
-      hasPermission === messaging.AuthorizationStatus.AUTHORIZED ||
-      hasPermission === messaging.AuthorizationStatus.PROVISIONAL
-    ) {
-      trackEvent({
-        event: "Notification_Permission_Granted",
-        trackEventparam,
-      });
-      await getFCMToken();
-    } else if (
-      hasPermission === messaging.AuthorizationStatus.DENIED ||
-      hasPermission === messaging.AuthorizationStatus.NOT_DETERMINED
-    ) {
-      // alert(hasPermission);
-      trackEventparam = { action: "Notification_Permission_Denied" };
-      trackEvent({
-        event: "Notification_Permission_Denied",
-        trackEventparam,
-      });
-      const isPermission = await requestUserPermission();
-      if (!isPermission) {
-        return false;
-      } else getFCMToken();
-    } else {
-      const isPermission = await requestUserPermission();
-      if (!isPermission) {
-        return false;
-      } else getFCMToken();
-    }
-  };
-
   /**gets the fcm token */
-  const getFCMToken = async () => {
-    const token = await messaging().getToken();
-    if (token) {
-      setFCMToken(token);
-    }
-  };
+
+  /**check the notification permission */
+
+
 
   /**set the fcm token */
   const setFCMToken = async (fcmToken) => {
@@ -301,3 +322,4 @@ export default function PushNotifications({ route, navigation }) {
   /**componet render method */
   return null;
 }
+
