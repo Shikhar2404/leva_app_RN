@@ -50,6 +50,7 @@ export default function BookConsultantScreen({ route, navigation }) {
     var amount = await data.invitee_payment_amount ? data.invitee_payment_amount : ''
     let response = await Request.post('appointment/save', params)
     if (response.status === "SUCCESS") {
+      trackEvent({event:'Consultation_Booked'})
       const data1 = JSON.parse(data)
       setState(oldState => ({
         ...oldState,
@@ -236,7 +237,6 @@ export default function BookConsultantScreen({ route, navigation }) {
             }}
             onMessage={(event) => {
               bookConsultantAPI(event.nativeEvent.data)
-
             }}
           ></WebView>
         }

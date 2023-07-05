@@ -111,9 +111,8 @@ export default function YourConsultantScreen({ route, navigation }) {
   }
   const clickScheduleCall = (item) => {
     const trackEventparam = { action: 'Schedule Video Call', name: item.name, price: item.price }
-    trackEvent({ event: 'Find_Your_Consultant', trackEventparam });
+    trackEvent({ event: 'Consultation_Viewed', trackEventparam });
     navigation.navigate('BookConsultantScreen', { data: item })
-
   }
 
   const renderItemConsultant = ({ item, index }) => {
