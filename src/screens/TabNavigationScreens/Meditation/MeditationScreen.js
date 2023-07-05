@@ -1,271 +1,331 @@
-import React, { useState, useEffect, useRef, } from 'react';
-import { View, Text, StyleSheet, TouchableWithoutFeedback, FlatList, ActivityIndicator } from 'react-native';
-import { colors } from '../../../utils/color'
-import { fonts, stylesBackground } from '../../../utils/font'
-import { importImages } from '../../../utils/importImages'
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
+import { colors } from "../../../utils/color";
+import { fonts, stylesBackground } from "../../../utils/font";
+import { importImages } from "../../../utils/importImages";
 import Header from "../../../components/Header";
-import Request from '../../../api/Request';
-import BallIndicator from '../../../components/BallIndicator';
-import { deviceWidth } from '../../../constants';
-import StorageService from '../../../utils/StorageService';
-import showSimpleAlert from '../../../utils/showSimpleAlert';
-import { trackEvent } from '../../../utils/tracking';
-import FastImage from 'react-native-fast-image';
-import { hasNotch } from 'react-native-device-info';
-import TextField from '../../../components/TextField';
-import JSFunctionUtils from '../../../utils/JSFunctionUtils';
-var searchFlag = false
+import Request from "../../../api/Request";
+import BallIndicator from "../../../components/BallIndicator";
+import { deviceWidth } from "../../../constants";
+import StorageService from "../../../utils/StorageService";
+import showSimpleAlert from "../../../utils/showSimpleAlert";
+import { trackEvent, trackMenuHamburger } from "../../../utils/tracking";
+import FastImage from "react-native-fast-image";
+import { hasNotch } from "react-native-device-info";
+import TextField from "../../../components/TextField";
+import JSFunctionUtils from "../../../utils/JSFunctionUtils";
+var searchFlag = false;
 import * as RNLocalize from "react-native-localize";
-import { Platform } from 'react-native';
-let cancelToken
-import axios from 'axios';
-import apiConfigs from '../../../api/apiConfig';
+import { Platform } from "react-native";
+let cancelToken;
+import axios from "axios";
+import apiConfigs from "../../../api/apiConfig";
+import { useDrawerStatus } from "@react-navigation/drawer";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function MeditationScreen({ route, navigation }) {
+  const [isOpen, setIsOpen] = useState(false)
+const  isFocused=  useIsFocused()
   const [state, setState] = useState({
     meditationsList: [],
     isModalVisible: false,
     isModalFooterVisible: false,
     pagenumber: 1,
     LastRecored: 0,
-    screentype: '1',
+    screentype: "1",
     refSearch: useRef(),
-    searchTxt: '',
+    searchTxt: "",
     isRefresh: false,
-
-  })
-
+  });
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('tabPress', (e) => {
+    const unsubscribe = navigation.addListener("tabPress", (e) => {
       // Prevent default action
-      StorageService.clearArt()
+      StorageService.clearArt();
     });
-    navigation.addListener('focus', () => {
-      getData()
+    navigation.addListener("focus", () => {
+      getData();
     });
     return unsubscribe;
-  }, [])
+  }, []);
   const getData = async () => {
-    state.refSearch.current.clear()
-    state.meditationsList = []
-    var data = await StorageService.getItem('clickMeditation')
-    state.screentype = data != null ? data : '1'
-    state.pagenumber = 1
-    state.LastRecored = 0
-    state.searchTxt = ''
-    MeditationApi(true)
-  }
+    state.refSearch.current.clear();
+    state.meditationsList = [];
+    var data = await StorageService.getItem("clickMeditation");
+    state.screentype = data != null ? data : "1";
+    state.pagenumber = 1;
+    state.LastRecored = 0;
+    state.searchTxt = "";
+    MeditationApi(true);
+  };
   const action_DetailsScreen = async (index, item) => {
-    navigation.navigate('MeditationDetailesScreen', { meditationsData: state.meditationsList, index: index, isNotification: false })
-  }
+    // const trackEventparam = { action: item.name };
+    // trackEvent({ event: trackEventparam.action, trackEventparam });
 
+    navigation.navigate("MeditationDetailesScreen", {
+      meditationsData: state.meditationsList,
+      index: index,
+      isNotification: false,
+    });
+  };
 
   const renderItem = ({ item, index }) => {
     return (
       <View style={{ marginBottom: 7 }}>
-        <TouchableWithoutFeedback onPress={() => action_DetailsScreen(index, item)}>
+        <TouchableWithoutFeedback
+          onPress={() => action_DetailsScreen(index, item)}
+        >
           <View style={styles.listViewStyle}>
-          <View style={styles.listImageStyle}>
-          <FastImage
+            <View style={styles.listImageStyle}>
+              <FastImage
                 source={importImages.defaultImg}
-                style={[styles.listImageStyle,]}>
+                style={[styles.listImageStyle]}
+              >
                 <FastImage
                   source={{ uri: item.image }}
-                  style={[styles.listImageStyle,]}></FastImage>
+                  style={[styles.listImageStyle]}
+                ></FastImage>
               </FastImage>
             </View>
             <Text style={styles.listTextStyle}>{item.name}</Text>
           </View>
         </TouchableWithoutFeedback>
-      </View >
-    )
-  }
+      </View>
+    );
+  };
 
   const MeditationApi = async (values, param, checkfotter) => {
-    const getallComplete = state.LastRecored == state.meditationsList.length ? false : true
-    setState(oldState => ({
+    const getallComplete =
+      state.LastRecored == state.meditationsList.length ? false : true;
+    setState((oldState) => ({
       ...oldState,
       isModalVisible: values,
       isModalFooterVisible: checkfotter ? checkfotter : getallComplete,
-    }))
+    }));
     let params = {
       page_no: param ? 1 : state.pagenumber,
       limit: 0,
       type: state.screentype,
-      search: param ? param : ''
-    }
-    let response = await Request.post('meditation/list', params)
-    if (response.status === 'SUCCESS') {
+      search: param ? param : "",
+    };
+    let response = await Request.post("meditation/list", params);
+    if (response.status === "SUCCESS") {
       if (param) {
-        setState(oldState => ({
+        setState((oldState) => ({
           ...oldState,
           meditationsList: response.data.meditations,
           isModalVisible: false,
           isModalFooterVisible: false,
           LastRecored: response.data.total_records,
           isRefresh: false,
-
-        }))
-      }
-      else {
-        setState(oldState => ({
+        }));
+      } else {
+        setState((oldState) => ({
           ...oldState,
-          meditationsList: state.isRefresh ? response.data.meditations : JSFunctionUtils.uniqueArray(state.meditationsList, response.data.meditations, "meditation_id"),
+          meditationsList: state.isRefresh
+            ? response.data.meditations
+            : JSFunctionUtils.uniqueArray(
+                state.meditationsList,
+                response.data.meditations,
+                "meditation_id"
+              ),
           isModalVisible: false,
           isModalFooterVisible: false,
           LastRecored: response.data.total_records,
           isRefresh: false,
-          pagenumber: response.data.total_records === state.meditationsList.length ? state.pagenumber : state.pagenumber + 1,
-
-        }))
+          pagenumber:
+            response.data.total_records === state.meditationsList.length
+              ? state.pagenumber
+              : state.pagenumber + 1,
+        }));
       }
-    }
-    else {
-      setState(oldState => ({
+    } else {
+      setState((oldState) => ({
         ...oldState,
         isModalVisible: false,
-        isModalFooterVisible: false
-
-
+        isModalFooterVisible: false,
       }));
       if (response) {
-        showSimpleAlert(response.message)
+        showSimpleAlert(response.message);
       }
     }
-  }
+  };
   const getDeviceToken = async () => {
-    const deviceToken = await StorageService.getItem(StorageService.STORAGE_KEYS.DEVICE_TOKEN);
+    const deviceToken = await StorageService.getItem(
+      StorageService.STORAGE_KEYS.DEVICE_TOKEN
+    );
     return deviceToken;
-  }
+  };
   const getToken = async () => {
-    const authToken = await StorageService.getItem(StorageService.STORAGE_KEYS.AUTH_TOKEN);
+    const authToken = await StorageService.getItem(
+      StorageService.STORAGE_KEYS.AUTH_TOKEN
+    );
     if (authToken) {
       return "Bearer " + authToken;
-    }
-    else {
-      return '@#Slsjpoq$S1o08#MnbAiB%UVUV&Y*5EU@exS1o!08L9TSlsjpo#FKDFJSDLFJSDLFJSDLFJSDQY';
+    } else {
+      return "@#Slsjpoq$S1o08#MnbAiB%UVUV&Y*5EU@exS1o!08L9TSlsjpo#FKDFJSDLFJSDLFJSDLFJSDQY";
       // default_auth_token
     }
-  }
+  };
   const MeditationApiSearch = async (values, param, checkfotter) => {
-    const getallComplete = state.LastRecored == state.meditationsList.length ? false : true
-    setState(oldState => ({
+    const getallComplete =
+      state.LastRecored == state.meditationsList.length ? false : true;
+    setState((oldState) => ({
       ...oldState,
       isModalVisible: values,
       isModalFooterVisible: checkfotter ? checkfotter : getallComplete,
-    }))
+    }));
     let params = {
       page_no: param ? 1 : state.pagenumber,
       limit: 0,
       type: state.screentype,
-      search: param ? param : ''
-    }
+      search: param ? param : "",
+    };
     if (typeof cancelToken != typeof undefined) {
-      cancelToken.cancel("Operation canceled due to new request.")
+      cancelToken.cancel("Operation canceled due to new request.");
     }
-    cancelToken = axios.CancelToken.source()
-    axios.post(`${apiConfigs.SERVER_API_URL}${'meditation/list'}`, params, {
-      headers: {
-        'Accept': '*/*',
-        'Content-Type': 'application/json',
-        'language': 'en',
-        'device_id': await getDeviceToken(),
-        'device_type': Platform.OS === 'android' ? '1' : '2',
-        'os': Platform.OS === 'android' ? 'android' : 'ios',
-        'app_version': '1',
-        'Authorization': await getToken(),
-        'timezone': RNLocalize.getTimeZone(),
-      },
-      cancelToken: cancelToken.token
-
-    })
+    cancelToken = axios.CancelToken.source();
+    axios
+      .post(`${apiConfigs.SERVER_API_URL}${"meditation/list"}`, params, {
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          language: "en",
+          device_id: await getDeviceToken(),
+          device_type: Platform.OS === "android" ? "1" : "2",
+          os: Platform.OS === "android" ? "android" : "ios",
+          app_version: "1",
+          Authorization: await getToken(),
+          timezone: RNLocalize.getTimeZone(),
+        },
+        cancelToken: cancelToken.token,
+      })
       .then((responses) => {
-        let response = responses.data
-        if (response.status === 'SUCCESS') {
+        let response = responses.data;
+        if (response.status === "SUCCESS") {
           if (param) {
-            setState(oldState => ({
+            setState((oldState) => ({
               ...oldState,
               meditationsList: response.data.meditations,
               isModalVisible: false,
               isModalFooterVisible: false,
               LastRecored: response.data.total_records,
               isRefresh: false,
-            }))
-          }
-          else {
-            setState(oldState => ({
+            }));
+          } else {
+            setState((oldState) => ({
               ...oldState,
-              meditationsList: state.isRefresh ? response.data.meditations : JSFunctionUtils.uniqueArray(state.meditationsList, response.data.meditations, "meditation_id"),
+              meditationsList: state.isRefresh
+                ? response.data.meditations
+                : JSFunctionUtils.uniqueArray(
+                    state.meditationsList,
+                    response.data.meditations,
+                    "meditation_id"
+                  ),
               isModalVisible: false,
               isModalFooterVisible: false,
               LastRecored: response.data.total_records,
               isRefresh: false,
-              pagenumber: response.data.total_records === state.meditationsList.length ? state.pagenumber : state.pagenumber + 1,
-            }))
+              pagenumber:
+                response.data.total_records === state.meditationsList.length
+                  ? state.pagenumber
+                  : state.pagenumber + 1,
+            }));
           }
         }
       })
       .catch((error) => {
-        setState(oldState => ({
+        setState((oldState) => ({
           ...oldState,
           isModalVisible: false,
-          isModalFooterVisible: error.message == 'Operation canceled due to new request.' ? true : false
+          isModalFooterVisible:
+            error.message == "Operation canceled due to new request."
+              ? true
+              : false,
         }));
-
-      })
-   
-   
-  }
+      });
+  };
   const fetchMore = () => {
-    const NotComplete = state.LastRecored != state.meditationsList.length ? true : false
+    const NotComplete =
+      state.LastRecored != state.meditationsList.length ? true : false;
     if (NotComplete) {
-      if (state.searchTxt == '') {
-        MeditationApi(false)
+      if (state.searchTxt == "") {
+        MeditationApi(false);
       }
     }
   };
   const onRefresh = () => {
-    if (state.searchTxt == '') {
-      state.meditationsList = []
-      state.pagenumber = 1
-      state.LastRecored = 0
-      state.isRefresh = true
-      MeditationApi(false)
+    if (state.searchTxt == "") {
+      state.meditationsList = [];
+      state.pagenumber = 1;
+      state.LastRecored = 0;
+      state.isRefresh = true;
+      MeditationApi(false);
     }
-
-  }
+  };
   const handleSearch = (text) => {
     var text = text.trim();
-    state.searchTxt = text
-    state.meditationsList = text == '' ? [] : state.meditationsList
-    state.pagenumber = text == '' ? 1 : state.pagenumber
-    state.LastRecored = text == '' ? 0 : state.LastRecored
-    searchFlag = text.length > 0 ? true : searchFlag
+    state.searchTxt = text;
+    state.meditationsList = text == "" ? [] : state.meditationsList;
+    state.pagenumber = text == "" ? 1 : state.pagenumber;
+    state.LastRecored = text == "" ? 0 : state.LastRecored;
+    searchFlag = text.length > 0 ? true : searchFlag;
     if (searchFlag) {
-      MeditationApiSearch(false, text, true)
+      MeditationApiSearch(false, text, true);
       searchFlag = text.length == 0 ? false : searchFlag;
     }
-  }
+  };
   const renderFooter = () => {
     return (
       //Footer View with Load More button
       <View style={styles.footer}>
-        {state.isModalFooterVisible ?
-          <ActivityIndicator color={colors.Blue} style={{ marginLeft: 8 }}
-            size={'large'}
-            hidesWhenStopped={true} />
-          : null}
+        {state.isModalFooterVisible ? (
+          <ActivityIndicator
+            color={colors.Blue}
+            style={{ marginLeft: 8 }}
+            size={"large"}
+            hidesWhenStopped={true}
+          />
+        ) : null}
       </View>
     );
-  }
+  };
   const action_event = (action) => {
-    const trackEventparam = { action: action }
-    trackEvent({ event: 'Meditations', trackEventparam })
-  }
+    const trackEventparam = { action: action };
+    trackEvent({ event: "Meditations", trackEventparam });
+  };
+    const DrawerStatus= useDrawerStatus()
+  
+  useEffect(() => {
+    if(isFocused){
+    DrawerStatus === 'open' &&
+      trackMenuHamburger(DrawerStatus)
+      && setIsOpen(true)
+DrawerStatus === 'closed' &&
+trackMenuHamburger(DrawerStatus)
+    }
+}, [DrawerStatus])
+
+
+  const openDrawer = () => {
+ navigation?.openDrawer();
+ }
+
+
   return (
     <View style={stylesBackground.container}>
-      <FastImage source={importImages.BackgroundAll} style={stylesBackground.backgroundimgcontainer} resizeMode={'stretch'}></FastImage>
+      <FastImage
+        source={importImages.BackgroundAll}
+        style={stylesBackground.backgroundimgcontainer}
+        resizeMode={"stretch"}
+      ></FastImage>
       {/* <Header
         headerTitle={'Meditations'}
         leftBtnOnPress={null}
@@ -273,32 +333,32 @@ export default function MeditationScreen({ route, navigation }) {
         style={{ alignItems: 'center', justifyContent: 'flex-start' }}
       /> */}
       <Header
-        leftBtnOnPress={() => {action_event('Menu Hamburger'),navigation.openDrawer()}}
+        leftBtnOnPress={openDrawer}
         menu={true}
         leftBtnStyle={{
           shadowColor: colors.background,
           elevation: 5,
           shadowOffset: {
             width: 3,
-            height: 2
+            height: 2,
           },
-          shadowOpacity: 0.20,
+          shadowOpacity: 0.2,
           shadowRadius: 6,
         }}
-        headerTitle={'Meditations'}
+        headerTitle={"Meditations"}
         titleStyle={styles.mainHeader}
       />
       {/* <Text style={styles.mainHeader}>{'Meditations'}</Text> */}
-      <View style={{ width: deviceWidth - 45, alignSelf: 'center', }}>
+      <View style={{ width: deviceWidth - 45, alignSelf: "center" }}>
         <TextField
-          key={'Search'}
-          placeholder={'Search'}
+          key={"Search"}
+          placeholder={"Search"}
           ImageSrc={importImages.searchicons}
           isShowImg={true}
           inputRef={state.refSearch}
           onChangeText={(text) => handleSearch(text)}
           blurOnSubmit={true}
-          autoCapitalize={'none'}
+          autoCapitalize={"none"}
         />
       </View>
       <View style={styles.container}>
@@ -313,40 +373,47 @@ export default function MeditationScreen({ route, navigation }) {
           keyExtractor={(item, index) => index.toString()}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={() => (
-
-            <Text style={stylesBackground.NodataStyle}>{state.isRefresh ? '' : state.isModalVisible || state.isModalFooterVisible ? '' : 'No data found'}</Text>
+            <Text style={stylesBackground.NodataStyle}>
+              {state.isRefresh
+                ? ""
+                : state.isModalVisible || state.isModalFooterVisible
+                ? ""
+                : "No data found"}
+            </Text>
           )}
-          contentContainerStyle={state.meditationsList.length > 0 ? {} : { flexGrow: 1, justifyContent: 'center', alignItems: 'center', }}
+          contentContainerStyle={
+            state.meditationsList.length > 0
+              ? {}
+              : { flexGrow: 1, justifyContent: "center", alignItems: "center" }
+          }
           ListFooterComponent={renderFooter}
-
         />
       </View>
-      {state.isModalVisible && <BallIndicator visible={state.isModalVisible}></BallIndicator>}
+      {state.isModalVisible && (
+        <BallIndicator visible={state.isModalVisible}></BallIndicator>
+      )}
     </View>
-
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: deviceWidth - 50,
-    alignSelf: 'center',
-    marginTop: 15
-
+    alignSelf: "center",
+    marginTop: 15,
   },
 
   listViewStyle: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginVertical: 13,
-
   },
 
   listImageStyle: {
     height: 105,
     width: 105,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   listTextStyle: {
@@ -355,18 +422,16 @@ const styles = StyleSheet.create({
     color: colors.Blue,
     marginLeft: 5,
     marginTop: 15,
-    width: (deviceWidth + 50) / 2
-
+    width: (deviceWidth + 50) / 2,
   },
   mainHeader: {
     color: colors.Blue,
     fontSize: 26,
     fontFamily: fonts.rubikBold,
     marginLeft: 25,
-    textTransform: 'capitalize'
+    textTransform: "capitalize",
   },
   footer: {
     height: hasNotch() ? 120 : 100,
   },
 });
-

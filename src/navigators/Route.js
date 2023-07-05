@@ -775,7 +775,17 @@ export default function Route(props) {
         };
         setnameroute(navigationContainerRef.getCurrentRoute().name);
         HandlerFloatButtonView(navigationContainerRef.getCurrentRoute().name);
-        trackEvent({ event: "Screen_Name", trackEventparam });
+        if (
+          !(
+            navigationContainerRef.getCurrentRoute().name ===
+              "ArticlesDetailesScreen" ||
+            navigationContainerRef.getCurrentRoute().name ===
+              "MeditationDetailesScreen" ||
+            navigationContainerRef.getCurrentRoute().name ===
+              "VideoDetailesScreen"
+          )
+        )
+          trackEvent({ event: "Screen_Name", trackEventparam });
       }}
       ref={(navigator) => {
         NavigationService.setTopLevelNavigator(navigator),

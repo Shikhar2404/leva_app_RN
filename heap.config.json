@@ -1,7 +1,6 @@
 {
   "default": {
-    "heapAutoInit": true,
-    "enableNativeTouchEventCapture": true
+    "heapAutoInit": true
   },
   "dev": {
     "heapAutoInit": true,
