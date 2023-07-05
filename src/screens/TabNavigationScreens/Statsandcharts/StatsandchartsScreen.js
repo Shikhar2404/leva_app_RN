@@ -5,13 +5,16 @@ import { fonts, stylesBackground } from '../../../utils/font'
 import { ConstantsText, deviceWidth } from '../../../constants'
 import { importImages } from '../../../utils/importImages'
 import Header from "../../../components/Header";
-import { trackEvent } from '../../../utils/tracking';
+import { trackEvent, trackMenuHamburger } from '../../../utils/tracking';
 import FastImage from 'react-native-fast-image';
 import showSimpleAlert from '../../../utils/showSimpleAlert';
 import StorageService from '../../../utils/StorageService';
+import { useDrawerStatus } from '@react-navigation/drawer';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function StatsandchartsScreen({ route, navigation }) {
-
+  const [isOpen, setIsOpen] = useState(false)
+const isFocused = useIsFocused()
   const [state, setState] = useState({
     StatsAndChartList: [{ image: importImages.pumpingimg, name: 'Pumping' }, { image: importImages.diapersimg, name: 'Diapers' }, { image: importImages.nursingimg, name: 'Nursing' },
     { image: importImages.growthimg, name: 'Growth' }, { image: importImages.bottlesimg, name: 'Bottles' }],
@@ -88,6 +91,22 @@ export default function StatsandchartsScreen({ route, navigation }) {
   }
 
 
+  const DrawerStatus= useDrawerStatus()
+  
+  useEffect(() => {
+    if(isFocused){
+      DrawerStatus === 'open' &&
+      trackMenuHamburger(DrawerStatus)
+      && setIsOpen(true)
+      DrawerStatus === 'closed' &&
+      trackMenuHamburger(DrawerStatus)
+    }
+}, [DrawerStatus])
+
+const openDrawer = () => {
+       navigation?.openDrawer();
+ }
+
   return (
     <View style={stylesBackground.container}>
       <FastImage source={importImages.BackgroundAll} style={stylesBackground.backgroundimgcontainer} resizeMode={'stretch'}></FastImage>
@@ -100,7 +119,7 @@ export default function StatsandchartsScreen({ route, navigation }) {
       /> */}
 
       <Header
-        leftBtnOnPress={() => {action_event('Menu Hamburger'),navigation.openDrawer()}}
+        leftBtnOnPress={openDrawer}
         menu={true}
         leftBtnStyle={{
           shadowColor: colors.background,

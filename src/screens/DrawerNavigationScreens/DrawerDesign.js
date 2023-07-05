@@ -110,6 +110,17 @@ export default function DrawerDesign(props) {
         }
 
     }
+
+
+
+     const openDrawer = () => {
+        trackEvent({
+          event: "SubscriptionScreen_From_Menu",
+        });
+       props.navigation.navigate('SubscriptionScreen');
+ }
+
+ 
     return (
         <View style={{ flex: 1, }}>
             <DrawerContentScrollView scrollEnabled={false}
@@ -209,7 +220,9 @@ export default function DrawerDesign(props) {
                     </TouchableOpacity>
 
                     {!state.IS_SUBSCRIBED && state.bannerStatus == 1 ?
-                        <TouchableOpacity onPress={() => { props.navigation.navigate('SubscriptionScreen') }}>
+                        <TouchableOpacity 
+                         onPress={openDrawer}
+                        >
                             <View style={[styles.signoutStyle, { backgroundColor: colors.Purple, height: 100, width: 224, borderRadius: 10, marginTop: 22, }]}>
                                 <FastImage source={{ uri: state.bannerImg }} style={{ height: 100, width: 224, borderRadius: 10, }} />
                             </View>
@@ -247,9 +260,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: fonts.rubikSemiBold
     },
-
-   
-
     subViewStyle: {
         position: 'absolute',
         bottom: 0,

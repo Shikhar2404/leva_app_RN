@@ -15,22 +15,28 @@ import Request from "../../../api/Request";
 import BallIndicator from "../../../components/BallIndicator";
 import { deviceWidth } from "../../../constants";
 import JSFunctionUtils from "../../../utils/JSFunctionUtils";
-import { useNavigation } from "@react-navigation/native";
+import {  useIsFocused, useNavigation } from "@react-navigation/native";
 import StorageService from "../../../utils/StorageService";
 import showSimpleAlert from "../../../utils/showSimpleAlert";
-import { trackEvent } from "../../../utils/tracking";
+import { trackEvent, trackMenuHamburger } from "../../../utils/tracking";
 import FastImage from "react-native-fast-image";
 import { hasNotch } from "react-native-device-info";
 import TextField from "../../../components/TextField";
 import axios from "axios";
 import apiConfigs from "../../../api/apiConfig";
-var searchFlag = false;
 import * as RNLocalize from "react-native-localize";
 import { Platform } from "react-native";
+import { useDrawerStatus } from "@react-navigation/drawer";
+
+var searchFlag = false;
+
 let cancelToken;
 
 export default function ArticlesScreen({ route, navigation }) {
   const navigations = useNavigation();
+ const [isOpen, setIsOpen] = useState(false)
+const isFocused =  useIsFocused()
+
   const [state, setState] = useState({
     articleList: [],
     isModalVisible: false,
@@ -149,10 +155,10 @@ export default function ArticlesScreen({ route, navigation }) {
           articleList: state.isRefresh
             ? response.data.articles
             : JSFunctionUtils.uniqueArray(
-                state.articleList,
-                response.data.articles,
-                "article_id"
-              ),
+              state.articleList,
+              response.data.articles,
+              "article_id"
+            ),
           isModalVisible: false,
           screentype: state.screentype,
           isModalFooterVisible: false,
@@ -232,10 +238,10 @@ export default function ArticlesScreen({ route, navigation }) {
               articleList: state.isRefresh
                 ? response.data.articles
                 : JSFunctionUtils.uniqueArray(
-                    state.articleList,
-                    response.data.articles,
-                    "article_id"
-                  ),
+                  state.articleList,
+                  response.data.articles,
+                  "article_id"
+                ),
               isModalVisible: false,
               screentype: state.screentype,
               isModalFooterVisible: false,
@@ -304,17 +310,33 @@ export default function ArticlesScreen({ route, navigation }) {
       </View>
     );
   };
+ 
+  
+  const DrawerStatus= useDrawerStatus()
+  
+  useEffect(() => {
+     if(isFocused){
+       DrawerStatus === 'open' &&
+       trackMenuHamburger(DrawerStatus)
+       && setIsOpen(true)
+       DrawerStatus === 'closed' &&
+       trackMenuHamburger(DrawerStatus)
+      }
+}, [DrawerStatus])
+
+  const openDrawer = () => {
+    navigation.openDrawer()
+  }
+
   return (
     <View style={stylesBackground.container}>
       <FastImage
         source={importImages.BackgroundAll}
         style={stylesBackground.backgroundimgcontainer}
-        resizeMode={"stretch"}
+        resizeMode={FastImage.resizeMode.stretch}
       ></FastImage>
       <Header
-        leftBtnOnPress={() => {
-          action_event("Menu Hamburger"), navigation.openDrawer();
-        }}
+        leftBtnOnPress={openDrawer}
         menu={true}
         leftBtnStyle={{
           shadowColor: colors.background,
@@ -356,8 +378,8 @@ export default function ArticlesScreen({ route, navigation }) {
               {state.isRefresh
                 ? ""
                 : state.isModalVisible || state.isModalFooterVisible
-                ? ""
-                : "No data found"}
+                  ? ""
+                  : "No data found"}
             </Text>
           )}
           contentContainerStyle={

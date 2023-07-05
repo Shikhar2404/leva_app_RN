@@ -22,7 +22,7 @@ import BallIndicator from "../../../components/BallIndicator";
 import Request from "../../../api/Request";
 import showSimpleAlert from "../../../utils/showSimpleAlert";
 import Tooltip from "react-native-walkthrough-tooltip";
-import { trackEvent } from "../../../utils/tracking";
+import { trackEvent, trackMenuHamburger } from "../../../utils/tracking";
 import FastImage from "react-native-fast-image";
 import { hasNotch } from "react-native-device-info";
 import { getAvailablePurchases } from "react-native-iap";
@@ -30,7 +30,12 @@ import NetInfo from "@react-native-community/netinfo";
 import SubscriptionModalView from "../../../components/SubscriptionModalView";
 import apiConfigs from "../../../api/apiConfig";
 import Share from "react-native-share";
+import { useDrawerStatus } from "@react-navigation/drawer";
+import { useIsFocused } from "@react-navigation/native";
 export default function HomeScreen({ route, navigation }) {
+   const [isOpen, setIsOpen] = useState(false)
+const isFocused= useIsFocused()
+
   const [state, setState] = useState({
     HomeDataList: [],
     isModalVisible: false,
@@ -601,18 +606,31 @@ export default function HomeScreen({ route, navigation }) {
     const trackEventparam = { action: action };
     trackEvent({ event: type, trackEventparam });
   };
+
+ const openDrawer = () => {
+       navigation?.openDrawer();
+ }
+ const DrawerStatus= useDrawerStatus()
+  useEffect(() => {
+    if(isFocused){
+    DrawerStatus === 'open' &&
+      trackMenuHamburger(DrawerStatus)
+      && setIsOpen(true)
+DrawerStatus === 'closed' &&
+trackMenuHamburger(DrawerStatus)}
+}, [DrawerStatus])
+
+
   return (
     <View style={stylesBackground.container}>
       <FastImage
         source={importImages.BackgroundAll}
         style={stylesBackground.backgroundimgcontainer}
-        resizeMode={"stretch"}
+        resizeMode={'stretch'}
       ></FastImage>
       <Header
         // headerTitle={'Jasmin’s Tracking:'}
-        leftBtnOnPress={() => {
-          action_event("Home", "Hamburger"), navigation.openDrawer();
-        }}
+        leftBtnOnPress={openDrawer}
         menu={true}
         headerTitle={
           state.HomeDataList.length > 0

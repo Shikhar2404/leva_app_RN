@@ -8,10 +8,15 @@ import Header from "../../../components/Header";
 import Request from '../../../api/Request';
 import BallIndicator from '../../../components/BallIndicator';
 import JSFunctionUtils from '../../../utils/JSFunctionUtils';
-import { trackEvent } from '../../../utils/tracking'
+import { trackEvent, trackMenuHamburger } from '../../../utils/tracking'
 import FastImage from 'react-native-fast-image';
 import { hasNotch } from 'react-native-device-info';
+import useDrawerStatus from '@react-navigation/drawer/src/utils/useDrawerStatus';
+import { useIsFocused } from '@react-navigation/native';
+
 export default function YourConsultantScreen({ route, navigation }) {
+ const [isOpen, setIsOpen] = useState(false)
+  const isFocused = useIsFocused()
   const [state, setState] = useState({
     ConsultantData: [],
     isModalVisible: false,
@@ -139,6 +144,21 @@ export default function YourConsultantScreen({ route, navigation }) {
 
     )
   }
+
+const DrawerStatus= useDrawerStatus()
+useEffect(() => {
+  if(isFocused){
+DrawerStatus === 'open' &&
+trackMenuHamburger(DrawerStatus)
+&& setIsOpen(true)
+DrawerStatus === 'closed' &&
+trackMenuHamburger(DrawerStatus)}
+}, [DrawerStatus ])
+  
+  const openDrawer = () => {
+ navigation?.openDrawer();
+ }
+
   return (
     <View style={stylesBackground.container}>
       <FastImage source={importImages.BackgroundAll} style={stylesBackground.backgroundimgcontainer} resizeMode={'stretch'}></FastImage>
@@ -149,12 +169,8 @@ export default function YourConsultantScreen({ route, navigation }) {
         style={{ alignItems: 'center', justifyContent: 'flex-start' }}
       /> */}
       <Header
-        leftBtnOnPress={() => {
-          const trackEventparam = { action: 'Menu Hamburger' }
-          trackEvent({ event: 'Find_Your_Consultant', trackEventparam })
-          navigation.openDrawer()
-        }}
         menu={true}
+        leftBtnOnPress={openDrawer}
         leftBtnStyle={{
           shadowColor: colors.background,
           elevation: 5,

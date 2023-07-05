@@ -14,8 +14,11 @@ const errorCodes = {
 /**
  * all url used in app
  */
+
 const apiUrl = {
   SERVER_API_URL: "https://api.levaapp.com:8443/api/v2/",
+  // SERVER_API_URL: "http://18.119.16.253:8443/api/v2/",
+
 };
 
 /**

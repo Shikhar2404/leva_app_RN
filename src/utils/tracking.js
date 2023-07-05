@@ -46,5 +46,11 @@ export function setUserIdentity(email) {
   console.log("email=>", email);
   Heap.identify(email);
 }
+export const trackMenuHamburger = (DrawerStatus) => {
+    console.log("DrawerStatus", DrawerStatus)
+    trackEvent({
+        event:  DrawerStatus === 'open' ? "Hamburger_Menu_Opened" :"Hamburger_Menu_Closed",
+    });
+}
 
 export default analytics;

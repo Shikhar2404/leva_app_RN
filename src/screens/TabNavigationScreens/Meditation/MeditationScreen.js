@@ -16,7 +16,7 @@ import BallIndicator from "../../../components/BallIndicator";
 import { deviceWidth } from "../../../constants";
 import StorageService from "../../../utils/StorageService";
 import showSimpleAlert from "../../../utils/showSimpleAlert";
-import { trackEvent } from "../../../utils/tracking";
+import { trackEvent, trackMenuHamburger } from "../../../utils/tracking";
 import FastImage from "react-native-fast-image";
 import { hasNotch } from "react-native-device-info";
 import TextField from "../../../components/TextField";
@@ -27,8 +27,12 @@ import { Platform } from "react-native";
 let cancelToken;
 import axios from "axios";
 import apiConfigs from "../../../api/apiConfig";
+import { useDrawerStatus } from "@react-navigation/drawer";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function MeditationScreen({ route, navigation }) {
+  const [isOpen, setIsOpen] = useState(false)
+const  isFocused=  useIsFocused()
   const [state, setState] = useState({
     meditationsList: [],
     isModalVisible: false,
@@ -297,6 +301,24 @@ export default function MeditationScreen({ route, navigation }) {
     const trackEventparam = { action: action };
     trackEvent({ event: "Meditations", trackEventparam });
   };
+    const DrawerStatus= useDrawerStatus()
+  
+  useEffect(() => {
+    if(isFocused){
+    DrawerStatus === 'open' &&
+      trackMenuHamburger(DrawerStatus)
+      && setIsOpen(true)
+DrawerStatus === 'closed' &&
+trackMenuHamburger(DrawerStatus)
+    }
+}, [DrawerStatus])
+
+
+  const openDrawer = () => {
+ navigation?.openDrawer();
+ }
+
+
   return (
     <View style={stylesBackground.container}>
       <FastImage
@@ -311,9 +333,7 @@ export default function MeditationScreen({ route, navigation }) {
         style={{ alignItems: 'center', justifyContent: 'flex-start' }}
       /> */}
       <Header
-        leftBtnOnPress={() => {
-          action_event("Menu Hamburger"), navigation.openDrawer();
-        }}
+        leftBtnOnPress={openDrawer}
         menu={true}
         leftBtnStyle={{
           shadowColor: colors.background,
